@@ -1,0 +1,75 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+
+namespace LearningCSharp
+{
+    class DelegateAndLambdaExpressions
+    {
+        static void Main(string[] args)
+        {
+            String[] input1 = new[] { "2", "1", "+", "3", "*" };
+            String[] input2 = new[] { "4", "13", "5", "/", "+" };
+            Debug.WriteLine(EvalRPN(input1));
+            Debug.WriteLine(EvalRPN(input2));
+        }
+
+        private delegate int Eval(int x, int y);
+
+        private static int Sum(int x, int y)
+        {
+            return x + y;
+        }
+        private static int Minus(int x, int y)
+        {
+            return x - y;
+        }
+
+        private static int Times(int x, int y)
+        {
+            return x * y;
+        }
+
+        private static int Divide(int x, int y)
+        {
+            return x / y;
+        }
+
+        //private static Dictionary<string, Eval> map = new Dictionary<string, Eval>()
+        //{
+        //    {"+", Sum},
+        //    {"-", Minus},
+        //    {"*", Times},
+        //    {"/", Divide}
+        //};
+
+        private static Dictionary<string, Eval> map = new Dictionary<string, Eval>()
+        {
+            {"+", (x, y)=>( x + y)},
+            {"-", (x, y)=>(x - y)},
+            {"*", (x, y)=>(x*y)},
+            {"/", (x, y)=>(x/y)}
+        };
+
+        //Evaluating Reverse Polish Notation
+        public static int EvalRPN(String[] tokens)
+        {
+            Stack<int> stack = new Stack<int>();
+            foreach (string t in tokens)
+            {
+                if (map.ContainsKey(t))
+                {
+                    int y = stack.Pop();
+                    int x = stack.Pop();
+                    stack.Push(map[t](x, y));
+                }
+                else
+                {
+                    stack.Push(int.Parse(t));
+                }
+            }
+            return stack.Pop();
+        }
+    }
+}
